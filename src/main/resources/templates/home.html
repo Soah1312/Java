@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Farmers Produce Tracker - Home</title>
+    <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1 class="title">Farmers Produce Tracker</h1>
+        <nav><a href="/farmer" class="link">Add Produce</a></nav>
+    </header>
+
+    <section>
+        <h2 class="subtitle">Available Produce</h2>
+    <div class="grid" th:if="${produceList != null and !#lists.isEmpty(produceList)}">
+            <div class="card item" th:each="p : ${produceList}">
+                <div class="emoji" th:text="${p.vegetable == 'Tomato' ? '🍅' : (p.vegetable == 'Potato' ? '🥔' : (p.vegetable == 'Onion' ? '🧅' : '🌾'))}"></div>
+                <div class="info">
+                    <div class="line"><span class="muted">Vegetable:</span> <span th:text="${p.vegetable}"></span></div>
+                    <div class="line"><span class="muted">Quantity:</span> <span th:text="${p.quantity}"></span> kg</div>
+                    <div class="line"><span class="muted">Price:</span> ₹<span th:text="${p.price}"></span>/kg</div>
+                </div>
+            </div>
+        </div>
+
+    <div th:if="${produceList == null or #lists.isEmpty(produceList)}" class="card">
+            <p class="muted">No produce listed yet.</p>
+        </div>
+    </section>
+</div>
+</body>
+</html>
+

@@ -1,0 +1,21 @@
+## Gradle
+/.gradle/
+/build/
+/bin/
+
+## Eclipse / IntelliJ / VSCode
+/.idea/
+*.iml
+/.vscode/
+.classpath
+.project
+.settings/
+
+## OS
+.DS_Store
+Thumbs.db
+
+## Java
+*.class
+
+# Keep the Gradle wrapper JAR committed so other machines can run the project with zero extra steps.
