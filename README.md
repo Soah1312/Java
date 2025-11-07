@@ -1,38 +1,43 @@
-# Farmers Produce Tracker (Spring Boot + H2)
+# Farmers Produce Tracker (JavaFX Desktop App)
 
-Minimal Java 17+ Spring Boot web app with a monochrome HTML/CSS UI and an in-memory H2 database (via Spring Data JPA). Two routes:
+A pure JavaFX desktop application for tracking farmer produce with H2 in-memory database.
 
-- `/farmer` – Add produce
-- `/home` – View all produce
+## How It Works
 
-## Requirements
-- Java 17+ (JDK 17 or newer)
+**Tech Stack**:
+- **JavaFX** - Desktop GUI framework (no web server)
+- **H2 Database** - In-memory SQL database with JDBC
+- **Pure Java** - No Spring Boot or heavy frameworks
 
-## Configure
-Defaults are set for H2 in `src/main/resources/application.properties`.
+**Flow**:
+1. JavaFX UI → `MainController` → `DatabaseService` → H2 Database (JDBC)
+2. Database responds via JDBC → Service layer → Controller → UI updates
 
-## Run (local)
-From `javaproj/Java`:
+**Features**:
+- Add produce with name, quantity, and farmer name
+- View all produce in a table
+- Refresh data in real-time
+- Lightweight and fast
 
+## How to Run
+
+**Requirements**: Java 17+
+
+**Windows**:
+```powershell
+cd D:\Coding\Projects\java\javaproj\Java
+.\gradlew.bat run
 ```
-.\u200cgradlew.bat bootRun
+
+**Mac/Linux**:
+```bash
+cd /path/to/Java
+./gradlew run
 ```
 
-Then open http://localhost:8080/home. H2 console at http://localhost:8080/h2-console (JDBC: `jdbc:h2:mem:farmersdb`, user `sa`, empty password).
+A desktop window will open with the Farmers Produce Tracker application.
 
-## Build
-```
-./gradlew build
-```
+## First Time Setup
 
-The Boot jar will be at `build/libs/farmersapp-0.0.1-SNAPSHOT.jar`.
-
-## Deploy
-- Build Command: `./gradlew build`
-- Start Command: `java -jar build/libs/farmersapp-0.0.1-SNAPSHOT.jar`
-
-## Notes
-- Uses Spring Data JPA with H2 in-memory database.
-- UI is grayscale, minimalist, emoji icons for produce.
-- Gradle Wrapper included; no global Gradle install required.
+The first run will download JavaFX libraries automatically. This may take a few minutes.
 

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="farmersapp.MainController"
+      spacing="20" style="-fx-background-color: #f5f5f5; -fx-padding: 20;">
+
+    <!-- Title -->
+    <Label text="🌾 Farmers Produce Tracker" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+
+    <!-- Add Produce Section -->
+    <VBox spacing="10" style="-fx-background-color: white; -fx-padding: 15; -fx-border-color: #ddd; -fx-border-radius: 5;">
+        <Label text="Add New Produce" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+        
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <Label text="Produce Name:"/>
+            <TextField fx:id="produceNameField" promptText="e.g., Tomatoes" prefWidth="200"/>
+        </HBox>
+        
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <Label text="Quantity (kg):"/>
+            <TextField fx:id="quantityField" promptText="e.g., 50.5" prefWidth="200"/>
+        </HBox>
+        
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <Label text="Farmer Name:"/>
+            <TextField fx:id="farmerNameField" promptText="e.g., John Doe" prefWidth="200"/>
+        </HBox>
+        
+        <Button text="Add Produce" onAction="#handleAddProduce" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold;"/>
+        <Label fx:id="statusLabel" style="-fx-text-fill: green;"/>
+    </VBox>
+
+    <!-- View All Produce Section -->
+    <VBox spacing="10" style="-fx-background-color: white; -fx-padding: 15; -fx-border-color: #ddd; -fx-border-radius: 5;" VBox.vgrow="ALWAYS">
+        <Label text="All Produce" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+        
+        <TableView fx:id="produceTable" VBox.vgrow="ALWAYS">
+            <columns>
+                <TableColumn fx:id="idColumn" text="ID" prefWidth="50"/>
+                <TableColumn fx:id="produceColumn" text="Produce" prefWidth="150"/>
+                <TableColumn fx:id="quantityColumn" text="Quantity (kg)" prefWidth="120"/>
+                <TableColumn fx:id="farmerColumn" text="Farmer" prefWidth="150"/>
+                <TableColumn fx:id="dateColumn" text="Date Added" prefWidth="150"/>
+            </columns>
+        </TableView>
+        
+        <Button text="Refresh" onAction="#handleRefresh" style="-fx-background-color: #2196F3; -fx-text-fill: white;"/>
+    </VBox>
+
+</VBox>
