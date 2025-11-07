@@ -1,43 +1,19 @@
-# Farmers Produce Tracker (JavaFX Desktop App)
+# Farmers Produce Tracker
 
-A pure JavaFX desktop application for tracking farmer produce with H2 in-memory database.
+A lightweight JavaFX desktop application for managing farmer produce inventory. Built with pure Java and JavaFX, this app uses an H2 in-memory database for data storage. The application provides a simple GUI to add, view, and track produce entries including product names, quantities, and farmer details. Data flows through a clean architecture: JavaFX UI → Controller → DatabaseService → H2 Database via JDBC. Features include real-time data refresh, table views, and form-based data entry. No web server required—just a standalone desktop application that's fast and efficient.
 
-## How It Works
+## Requirements
 
-**Tech Stack**:
-- **JavaFX** - Desktop GUI framework (no web server)
-- **H2 Database** - In-memory SQL database with JDBC
-- **Pure Java** - No Spring Boot or heavy frameworks
-
-**Flow**:
-1. JavaFX UI → `MainController` → `DatabaseService` → H2 Database (JDBC)
-2. Database responds via JDBC → Service layer → Controller → UI updates
-
-**Features**:
-- Add produce with name, quantity, and farmer name
-- View all produce in a table
-- Refresh data in real-time
-- Lightweight and fast
+- Java 17 or higher
 
 ## How to Run
 
-**Requirements**: Java 17+
+Navigate to the project directory and execute:
 
-**Windows**:
 ```powershell
-cd D:\Coding\Projects\java\javaproj\Java
+cd Java
 .\gradlew.bat run
 ```
 
-**Mac/Linux**:
-```bash
-cd /path/to/Java
-./gradlew run
-```
-
-A desktop window will open with the Farmers Produce Tracker application.
-
-## First Time Setup
-
-The first run will download JavaFX libraries automatically. This may take a few minutes.
+The desktop application window will launch automatically.
 
