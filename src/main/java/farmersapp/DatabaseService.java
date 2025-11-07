@@ -1,6 +1,5 @@
 package farmersapp;
 
-import farmersapp.Produce;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,34 +30,52 @@ public class DatabaseService {
     }
 
     private void createTable() throws SQLException {
-        String sql = """
+        // Create farmers table
+        String farmersSql = """
+            CREATE TABLE IF NOT EXISTS farmers (
+                id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                name VARCHAR(255) NOT NULL,
+                phone VARCHAR(20),
+                location VARCHAR(255)
+            )
+            """;
+        
+        // Create produce table with foreign key
+        String produceSql = """
             CREATE TABLE IF NOT EXISTS produce (
                 id BIGINT AUTO_INCREMENT PRIMARY KEY,
                 produce_name VARCHAR(255) NOT NULL,
-                quantity DECIMAL(19,4),
-                farmer_name VARCHAR(255) NOT NULL,
-                date_added VARCHAR(255)
+                quantity DECIMAL(10,2) NOT NULL,
+                farmer_id BIGINT,
+                date_added TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                CONSTRAINT produce_farmer_fk FOREIGN KEY(farmer_id) REFERENCES farmers(id)
             )
             """;
+        
         try (Statement stmt = connection.createStatement()) {
-            stmt.execute(sql);
+            stmt.execute(farmersSql);
+            stmt.execute(produceSql);
         }
     }
 
     public void addProduce(Produce produce) throws SQLException {
-        String sql = "INSERT INTO produce (produce_name, quantity, farmer_name, date_added) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO produce (produce_name, quantity, farmer_id) VALUES (?, ?, ?)";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, produce.getProduceName());
             pstmt.setBigDecimal(2, produce.getQuantity());
-            pstmt.setString(3, produce.getFarmerName());
-            pstmt.setString(4, produce.getDateAdded());
+            pstmt.setLong(3, produce.getFarmerId());
             pstmt.executeUpdate();
         }
     }
 
     public List<Produce> getAllProduce() throws SQLException {
         List<Produce> produceList = new ArrayList<>();
-        String sql = "SELECT * FROM produce ORDER BY id DESC";
+        String sql = """
+            SELECT p.id, p.produce_name, p.quantity, p.farmer_id, f.name as farmer_name, p.date_added
+            FROM produce p
+            LEFT JOIN farmers f ON p.farmer_id = f.id
+            ORDER BY p.id DESC
+            """;
         
         try (Statement stmt = connection.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
@@ -68,13 +85,53 @@ public class DatabaseService {
                     rs.getLong("id"),
                     rs.getString("produce_name"),
                     rs.getBigDecimal("quantity"),
+                    rs.getLong("farmer_id"),
                     rs.getString("farmer_name"),
-                    rs.getString("date_added")
+                    rs.getTimestamp("date_added").toString()
                 );
                 produceList.add(produce);
             }
         }
         return produceList;
+    }
+
+    // Farmer CRUD operations
+    public void addFarmer(Farmer farmer) throws SQLException {
+        String sql = "INSERT INTO farmers (name, phone, location) VALUES (?, ?, ?)";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, farmer.getName());
+            pstmt.setString(2, farmer.getPhone());
+            pstmt.setString(3, farmer.getLocation());
+            pstmt.executeUpdate();
+        }
+    }
+
+    public List<Farmer> getAllFarmers() throws SQLException {
+        List<Farmer> farmerList = new ArrayList<>();
+        String sql = "SELECT * FROM farmers ORDER BY name ASC";
+        
+        try (Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            
+            while (rs.next()) {
+                Farmer farmer = new Farmer(
+                    rs.getLong("id"),
+                    rs.getString("name"),
+                    rs.getString("phone"),
+                    rs.getString("location")
+                );
+                farmerList.add(farmer);
+            }
+        }
+        return farmerList;
+    }
+
+    public void deleteFarmer(Long id) throws SQLException {
+        String sql = "DELETE FROM farmers WHERE id = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setLong(1, id);
+            pstmt.executeUpdate();
+        }
     }
 
     public void close() {

@@ -5,12 +5,52 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="farmersapp.MainController"
-      spacing="20" style="-fx-background-color: #f5f5f5; -fx-padding: 20;">
+<ScrollPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="farmersapp.MainController"
+            fitToWidth="true" style="-fx-background-color: #f5f5f5;">
+<VBox spacing="20" style="-fx-background-color: #f5f5f5; -fx-padding: 20;">
 
     <!-- Title -->
     <Label text="🌾 Farmers Produce Tracker" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+
+    <!-- Farmer Management Section -->
+    <VBox spacing="10" style="-fx-background-color: white; -fx-padding: 15; -fx-border-color: #ddd; -fx-border-radius: 5;">
+        <Label text="👨‍🌾 Add New Farmer" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+        
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <Label text="Name:*"/>
+            <TextField fx:id="farmerNameField" promptText="e.g., John Doe" prefWidth="200"/>
+        </HBox>
+        
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <Label text="Phone:"/>
+            <TextField fx:id="farmerPhoneField" promptText="e.g., +1234567890" prefWidth="200"/>
+        </HBox>
+        
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <Label text="Location:"/>
+            <TextField fx:id="farmerLocationField" promptText="e.g., California" prefWidth="200"/>
+        </HBox>
+        
+        <Button text="Add Farmer" onAction="#handleAddFarmer" style="-fx-background-color: #FF9800; -fx-text-fill: white; -fx-font-weight: bold;"/>
+        <Label fx:id="farmerStatusLabel" style="-fx-text-fill: green;"/>
+    </VBox>
+
+    <!-- Farmers Table -->
+    <VBox spacing="10" style="-fx-background-color: white; -fx-padding: 15; -fx-border-color: #ddd; -fx-border-radius: 5;">
+        <Label text="All Farmers" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+        
+        <TableView fx:id="farmersTable" prefHeight="150">
+            <columns>
+                <TableColumn fx:id="farmerIdColumn" text="ID" prefWidth="50"/>
+                <TableColumn fx:id="farmerNameColumn" text="Name" prefWidth="150"/>
+                <TableColumn fx:id="farmerPhoneColumn" text="Phone" prefWidth="120"/>
+                <TableColumn fx:id="farmerLocationColumn" text="Location" prefWidth="150"/>
+            </columns>
+        </TableView>
+        
+        <Button text="Refresh Farmers" onAction="#handleRefreshFarmers" style="-fx-background-color: #9C27B0; -fx-text-fill: white;"/>
+    </VBox>
 
     <!-- Add Produce Section -->
     <VBox spacing="10" style="-fx-background-color: white; -fx-padding: 15; -fx-border-color: #ddd; -fx-border-radius: 5;">
@@ -27,8 +67,8 @@
         </HBox>
         
         <HBox spacing="10" alignment="CENTER_LEFT">
-            <Label text="Farmer Name:"/>
-            <TextField fx:id="farmerNameField" promptText="e.g., John Doe" prefWidth="200"/>
+            <Label text="Select Farmer:*"/>
+            <ComboBox fx:id="farmerComboBox" promptText="Choose a farmer" prefWidth="200"/>
         </HBox>
         
         <Button text="Add Produce" onAction="#handleAddProduce" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold;"/>
@@ -53,3 +93,4 @@
     </VBox>
 
 </VBox>
+</ScrollPane>

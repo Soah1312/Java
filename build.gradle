@@ -23,16 +23,14 @@ repositories {
 
 dependencies {
     implementation 'com.h2database:h2:2.2.224'
-    
+    implementation 'org.openjfx:javafx-controls:21'
+    implementation 'org.openjfx:javafx-fxml:21'
+
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
 }
 
 application {
     mainClass = 'farmersapp.FarmersAppApplication'
-}
-
-tasks.named('test') {
-    useJUnitPlatform()
 }
 
 tasks.named('test') {

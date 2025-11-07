@@ -7,15 +7,17 @@ public class Produce {
     private Long id;
     private String produceName;
     private BigDecimal quantity;
-    private String farmerName;
+    private Long farmerId;
+    private String farmerName; // For display purposes (from JOIN)
     private String dateAdded;
 
     public Produce() {}
 
-    public Produce(Long id, String produceName, BigDecimal quantity, String farmerName, String dateAdded) {
+    public Produce(Long id, String produceName, BigDecimal quantity, Long farmerId, String farmerName, String dateAdded) {
         this.id = id;
         this.produceName = produceName;
         this.quantity = quantity;
+        this.farmerId = farmerId;
         this.farmerName = farmerName;
         this.dateAdded = dateAdded;
     }
@@ -42,6 +44,14 @@ public class Produce {
 
     public void setQuantity(BigDecimal quantity) {
         this.quantity = quantity;
+    }
+
+    public Long getFarmerId() {
+        return farmerId;
+    }
+
+    public void setFarmerId(Long farmerId) {
+        this.farmerId = farmerId;
     }
 
     public String getFarmerName() {
