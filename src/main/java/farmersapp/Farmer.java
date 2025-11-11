@@ -1,5 +1,6 @@
 package farmersapp;
 
+// simple class to hold farmer data
 public class Farmer {
 
     private Long id;
@@ -7,8 +8,10 @@ public class Farmer {
     private String phone;
     private String location;
 
+    // empty constructor
     public Farmer() {}
 
+    // constructor with everything
     public Farmer(Long id, String name, String phone, String location) {
         this.id = id;
         this.name = name;
@@ -16,6 +19,7 @@ public class Farmer {
         this.location = location;
     }
 
+    // all the getters and setters below
     public Long getId() {
         return id;
     }
@@ -48,8 +52,9 @@ public class Farmer {
         this.location = location;
     }
 
+    // this makes the dropdown show the farmer name instead of weird memory address
     @Override
     public String toString() {
-        return name; // For ComboBox display
+        return name;
     }
 }

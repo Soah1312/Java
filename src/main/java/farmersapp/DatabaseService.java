@@ -4,24 +4,30 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+// this handles all the database stuff
+// spent like 3 days figuring out h2 database lol
 public class DatabaseService {
 
-    private static final String DB_URL = "jdbc:h2:mem:farmersdb;DB_CLOSE_DELAY=-1";
+    // connection info for the database
+    private static final String DB_URL = "jdbc:h2:mem:farmersdb;DB_CLOSE_DELAY=-1"; // in-memory database
     private static final String DB_USER = "sa";
-    private static final String DB_PASSWORD = "";
+    private static final String DB_PASSWORD = ""; // no password needed for h2
     
-    private static DatabaseService instance;
+    private static DatabaseService instance; // singleton pattern we learned last week
     private Connection connection;
 
+    // private constructor so you can't make new instances
     private DatabaseService() {
         try {
+            // connect to database
             connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
-            createTable();
+            createTable(); // make the tables when we first connect
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
+    // this makes sure there's only one database connection
     public static DatabaseService getInstance() {
         if (instance == null) {
             instance = new DatabaseService();
@@ -29,8 +35,9 @@ public class DatabaseService {
         return instance;
     }
 
+    // create the tables in the database
     private void createTable() throws SQLException {
-        // Create farmers table
+        // farmers table
         String farmersSql = """
             CREATE TABLE IF NOT EXISTS farmers (
                 id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -40,7 +47,7 @@ public class DatabaseService {
             )
             """;
         
-        // Create produce table with foreign key
+        // produce table with foreign key to farmers
         String produceSql = """
             CREATE TABLE IF NOT EXISTS produce (
                 id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -58,18 +65,21 @@ public class DatabaseService {
         }
     }
 
+    // add new produce to database
     public void addProduce(Produce produce) throws SQLException {
         String sql = "INSERT INTO produce (produce_name, quantity, farmer_id) VALUES (?, ?, ?)";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, produce.getProduceName());
             pstmt.setBigDecimal(2, produce.getQuantity());
             pstmt.setLong(3, produce.getFarmerId());
-            pstmt.executeUpdate();
+            pstmt.executeUpdate(); // run the insert query
         }
     }
 
+    // get all produce from database
     public List<Produce> getAllProduce() throws SQLException {
         List<Produce> produceList = new ArrayList<>();
+        // using join to get farmer name too
         String sql = """
             SELECT p.id, p.produce_name, p.quantity, p.farmer_id, f.name as farmer_name, p.date_added
             FROM produce p
@@ -80,6 +90,7 @@ public class DatabaseService {
         try (Statement stmt = connection.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             
+            // loop through all results and make produce objects
             while (rs.next()) {
                 Produce produce = new Produce(
                     rs.getLong("id"),
@@ -95,7 +106,7 @@ public class DatabaseService {
         return produceList;
     }
 
-    // Farmer CRUD operations
+    // add new farmer to database
     public void addFarmer(Farmer farmer) throws SQLException {
         String sql = "INSERT INTO farmers (name, phone, location) VALUES (?, ?, ?)";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
@@ -106,6 +117,7 @@ public class DatabaseService {
         }
     }
 
+    // get all farmers from database
     public List<Farmer> getAllFarmers() throws SQLException {
         List<Farmer> farmerList = new ArrayList<>();
         String sql = "SELECT * FROM farmers ORDER BY name ASC";
@@ -126,14 +138,7 @@ public class DatabaseService {
         return farmerList;
     }
 
-    public void deleteFarmer(Long id) throws SQLException {
-        String sql = "DELETE FROM farmers WHERE id = ?";
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            pstmt.setLong(1, id);
-            pstmt.executeUpdate();
-        }
-    }
-
+    // close database connection when done
     public void close() {
         try {
             if (connection != null && !connection.isClosed()) {

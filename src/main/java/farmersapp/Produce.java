@@ -2,17 +2,22 @@ package farmersapp;
 
 import java.math.BigDecimal;
 
+// this class is just for storing produce info
+// learned about this in week 1 of oop lol
 public class Produce {
 
+    // these are the things we need to track
     private Long id;
     private String produceName;
-    private BigDecimal quantity;
+    private BigDecimal quantity; // using bigdecimal cause double is weird with decimals
     private Long farmerId;
-    private String farmerName; // For display purposes (from JOIN)
+    private String farmerName; // just for showing in the table
     private String dateAdded;
 
+    // empty constructor needed for javafx apparently
     public Produce() {}
 
+    // constructor with all the stuff
     public Produce(Long id, String produceName, BigDecimal quantity, Long farmerId, String farmerName, String dateAdded) {
         this.id = id;
         this.produceName = produceName;
@@ -22,6 +27,7 @@ public class Produce {
         this.dateAdded = dateAdded;
     }
 
+    // getters and setters (had to write all of these manually took forever)
     public Long getId() {
         return id;
     }

@@ -1,51 +1,99 @@
-# Farmers Produce Tracker (JavaFX + H2)
+# farmers produce tracker# Farmers Produce Tracker (JavaFX + H2)
 
-A modern Java 17+ JavaFX desktop application with normalized database schema for managing farmers and their produce. Features an intuitive UI with H2 in-memory database and clean layered architecture.
 
-## Features
 
-- **Farmer Management**: Add, view, and manage farmer records
+hey so this is my first real javafx project! basically its a desktop app to track produce from different farmers. been learning javafx and sql for like 2 weeks now and wanted to make something useful. the app uses h2 database which is cool cause it runs in memory so you dont need to install mysql or anything. you can add farmers with their info, then add produce and link it to a farmer. everything shows up in tables and you can refresh them. the ui is built with fxml which took me forever to understand but its actually pretty neat once you get it. overall pretty happy with how it turned out even tho the code is probably messy lolA modern Java 17+ JavaFX desktop application with normalized database schema for managing farmers and their produce. Features an intuitive UI with H2 in-memory database and clean layered architecture.
+
+
+
+## how to run## Features
+
+
+
+just cd into the Java folder and run this command:- **Farmer Management**: Add, view, and manage farmer records
+
 - **Produce Tracking**: Link produce to farmers with foreign key relationships
-- **Normalized Schema**: Proper one-to-many relationship (farmer → produce)
-- **Interactive UI**: JavaFX-based desktop interface with tables and forms
-- **H2 Database**: Embedded in-memory database (easily migrated to MySQL)
-- **Clean Architecture**: Layered design (Model, DAO, Controller, View)
 
----
+```powershell- **Normalized Schema**: Proper one-to-many relationship (farmer → produce)
 
-## Requirements
+cd Java- **Interactive UI**: JavaFX-based desktop interface with tables and forms
 
-- **Java 17+** (JDK 17 or newer)
-- **JavaFX SDK 21** (or 17+) - Download from [openjfx.io](https://openjfx.io)
-- **Gradle** (included via Gradle Wrapper)
+.\gradlew.bat run- **H2 Database**: Embedded in-memory database (easily migrated to MySQL)
 
----
+```- **Clean Architecture**: Layered design (Model, DAO, Controller, View)
+
+
+
+it'll open a window with the app---
+
+
+
+## what i learned## Requirements
+
+
+
+- javafx is actually pretty cool for making desktop apps- **Java 17+** (JDK 17 or newer)
+
+- h2 database is super easy to use for testing- **JavaFX SDK 21** (or 17+) - Download from [openjfx.io](https://openjfx.io)
+
+- fxml separates ui from code which is nice- **Gradle** (included via Gradle Wrapper)
+
+- prepared statements prevent sql injection (learned that the hard way)
+
+- observablelist is needed for javafx tables---
+
+- bigdecimal is better than double for money/quantity stuff
 
 ## Database Schema
 
+## requirements
+
 ### Tables Created
 
+needs java 17 or higher
+
 #### 1. `farmers` Table
-Stores farmer information with contact details.
 
-| Column   | Type         | Constraints           | Description                    |
-|----------|--------------|-----------------------|--------------------------------|
-| `id`     | BIGINT       | PRIMARY KEY, AUTO_INCREMENT | Unique farmer identifier |
-| `name`   | VARCHAR(255) | NOT NULL              | Farmer's full name             |
+## how to useStores farmer information with contact details.
+
+
+
+1. first add some farmers with their names and stuff| Column   | Type         | Constraints           | Description                    |
+
+2. then you can add produce and pick which farmer it belongs to|----------|--------------|-----------------------|--------------------------------|
+
+3. everything shows up in the tables| `id`     | BIGINT       | PRIMARY KEY, AUTO_INCREMENT | Unique farmer identifier |
+
+4. hit refresh if stuff doesnt update| `name`   | VARCHAR(255) | NOT NULL              | Farmer's full name             |
+
 | `phone`  | VARCHAR(20)  | NULL                  | Contact phone number           |
-| `location` | VARCHAR(255) | NULL                | Farm location/address          |
 
-**Purpose**: Central registry of all farmers in the system.
+## the database| `location` | VARCHAR(255) | NULL                | Farm location/address          |
 
-#### 2. `produce` Table
+
+
+theres 2 tables:**Purpose**: Central registry of all farmers in the system.
+
+- farmers table: stores farmer id, name, phone, location
+
+- produce table: stores produce id, name, quantity, which farmer it belongs to, and when you added it#### 2. `produce` Table
+
 Stores produce records linked to farmers via foreign key.
 
+the produce table has a foreign key to the farmers table so you cant add produce without a farmer (learned about foreign keys last week)
+
 | Column        | Type         | Constraints                          | Description                    |
-|---------------|--------------|--------------------------------------|--------------------------------|
+
+## notes|---------------|--------------|--------------------------------------|--------------------------------|
+
 | `id`          | BIGINT       | PRIMARY KEY, AUTO_INCREMENT          | Unique produce identifier      |
-| `produce_name`| VARCHAR(255) | NOT NULL                             | Name of the produce (e.g., Tomatoes) |
-| `quantity`    | DECIMAL(10,2)| NOT NULL                             | Quantity in kilograms          |
-| `farmer_id`   | BIGINT       | FOREIGN KEY → `farmers(id)`          | Reference to farmer who owns this produce |
+
+- data disappears when you close the app cause its in-memory| `produce_name`| VARCHAR(255) | NOT NULL                             | Name of the produce (e.g., Tomatoes) |
+
+- probably has bugs but works for me| `quantity`    | DECIMAL(10,2)| NOT NULL                             | Quantity in kilograms          |
+
+- maybe ill add delete buttons later idk| `farmer_id`   | BIGINT       | FOREIGN KEY → `farmers(id)`          | Reference to farmer who owns this produce |
+
 | `date_added`  | TIMESTAMP    | DEFAULT CURRENT_TIMESTAMP            | Auto-generated timestamp       |
 
 **Purpose**: Track produce inventory with proper farmer attribution.
