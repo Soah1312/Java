@@ -23,5 +23,5 @@ public class Produce { // just a simple data holder for one produce item
     public double getPrice() { return price; }
     public void setPrice(double price) { this.price = price; }
 
-    public double getTotal() { return kg * price; } // math is basic: total = kg * price
+    
 }

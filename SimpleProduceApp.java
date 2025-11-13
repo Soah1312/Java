@@ -46,13 +46,11 @@ public class SimpleProduceApp extends Application {
         TableColumn<Produce, Number> priceCol = new TableColumn<>("Price");
         priceCol.setCellValueFactory(c -> new SimpleDoubleProperty(c.getValue().getPrice()));
 
-        TableColumn<Produce, Number> totalCol = new TableColumn<>("Total");
-        totalCol.setCellValueFactory(c -> new SimpleDoubleProperty(c.getValue().getTotal()));
-
+        
         table.getColumns().add(nameCol);
         table.getColumns().add(kgCol);
         table.getColumns().add(priceCol);
-        table.getColumns().add(totalCol);
+        
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN); // auto-fit columns
 
         data = FXCollections.observableArrayList(); // in-memory list backing the table
