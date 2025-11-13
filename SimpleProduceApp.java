@@ -1,5 +1,3 @@
-package farmersapp.simple;
-
 import javafx.application.Application;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.FXCollections;
@@ -30,13 +28,11 @@ public class SimpleProduceApp extends Application {
 
         BorderPane root = new BorderPane();
 
-        // Top bar with a Dashboard button
         Button dashboardBtn = new Button("Dashboard");
         HBox top = new HBox(10, new Label("Farmers Produce Tracker"), dashboardBtn);
         top.setPadding(new Insets(10));
         root.setTop(top);
 
-        // Center: TableView
         table = new TableView<>();
         TableColumn<Produce, String> nameCol = new TableColumn<>("Produce");
         nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -60,7 +56,6 @@ public class SimpleProduceApp extends Application {
         table.setItems(data);
         root.setCenter(table);
 
-        // Bottom: Add form
         form = new GridPane();
         form.setPadding(new Insets(12));
         form.setHgap(10);
@@ -102,7 +97,6 @@ public class SimpleProduceApp extends Application {
             }
         });
 
-        // Hide the form by default; toggle it with Dashboard button
         form.setVisible(false);
         form.setManaged(false);
         dashboardBtn.setOnAction(e -> {
@@ -116,7 +110,6 @@ public class SimpleProduceApp extends Application {
 
         root.setBottom(form);
 
-        // Initial load
         loadData();
 
         Scene scene = new Scene(root, 800, 500);

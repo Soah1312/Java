@@ -1,5 +1,3 @@
-package farmersapp.simple;
-
 public class Produce {
     private long id;
     private String name;
