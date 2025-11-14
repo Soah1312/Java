@@ -1,0 +1,23 @@
+digraph ER {
+    graph [
+        rankdir = "LR";
+        label = "ER Diagram for Produce App";
+        fontsize = 16;
+        fontname = "Helvetica";
+    ];
+    node [
+        shape = "record";
+        fontsize = 10;
+        fontname = "Helvetica";
+    ];
+
+    produce [
+        label = "{produce | 
+            + id: BIGINT (PK)\l | 
+            + name: VARCHAR\l | 
+            + kg: DOUBLE\l | 
+            + price: DOUBLE\l | 
+            + created_at: TIMESTAMP\l 
+        }"
+    ];
+}
