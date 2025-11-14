@@ -1,17 +1,17 @@
-public class Produce {
-    private long id;
-    private String name;
-    private double kg;
-    private double price;
+public class Produce { // just a simple data holder for one produce item
+    private long id;    // DB id so I can fetch/update if needed
+    private String name; // what the thing is called
+    private double kg;   // how many kilograms I have
+    private double price; // price per kg
 
-    public Produce(long id, String name, double kg, double price) {
+    public Produce(long id, String name, double kg, double price) { // quick constructor to set everything
         this.id = id;
         this.name = name;
         this.kg = kg;
         this.price = price;
     }
 
-    public long getId() { return id; }
+    public long getId() { return id; } // I need getters so the TableView can read values
     public void setId(long id) { this.id = id; }
 
     public String getName() { return name; }
@@ -23,5 +23,5 @@ public class Produce {
     public double getPrice() { return price; }
     public void setPrice(double price) { this.price = price; }
 
-    public double getTotal() { return kg * price; }
+    
 }
