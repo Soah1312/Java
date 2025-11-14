@@ -26,13 +26,21 @@ public class SimpleProduceApp extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
+        // Show login dialog first
+        if (!showLoginDialog()) {
+            stage.close();
+            return;
+        }
+
         // Make sure the table exists in the DB before anything else
         ensureSchema();
 
         BorderPane root = new BorderPane(); // This is the main layout: top/center/bottom
 
+        Label farmerNameLabel = new Label("Farmer: Ram");
+        farmerNameLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold;");
         Button dashboardBtn = new Button("Dashboard"); // This toggles the add form on/off
-        HBox top = new HBox(10, new Label("Farmers Produce Tracker"), dashboardBtn);
+        HBox top = new HBox(10, farmerNameLabel, new Label("Farmers Produce Tracker"), dashboardBtn);
         top.setPadding(new Insets(10));
         root.setTop(top);
 
@@ -46,10 +54,40 @@ public class SimpleProduceApp extends Application {
         TableColumn<Produce, Number> priceCol = new TableColumn<>("Price");
         priceCol.setCellValueFactory(c -> new SimpleDoubleProperty(c.getValue().getPrice()));
 
+        TableColumn<Produce, Void> actionsCol = new TableColumn<>("Actions");
+        actionsCol.setCellFactory(col -> new TableCell<>() {
+            private final Button updateBtn = new Button("Update");
+            private final Button deleteBtn = new Button("Delete");
+            private final HBox buttons = new HBox(5, updateBtn, deleteBtn);
+
+            {
+                updateBtn.setOnAction(e -> {
+                    Produce produce = getTableView().getItems().get(getIndex());
+                    showUpdateDialog(produce);
+                });
+
+                deleteBtn.setOnAction(e -> {
+                    Produce produce = getTableView().getItems().get(getIndex());
+                    try {
+                        deleteProduce(produce.getId());
+                        data.remove(produce);
+                    } catch (SQLException ex) {
+                        showAlert(Alert.AlertType.ERROR, "DB Error", ex.getMessage());
+                    }
+                });
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                setGraphic(empty ? null : buttons);
+            }
+        });
         
         table.getColumns().add(nameCol);
         table.getColumns().add(kgCol);
         table.getColumns().add(priceCol);
+        table.getColumns().add(actionsCol);
         
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN); // auto-fit columns
 
@@ -166,6 +204,128 @@ public class SimpleProduceApp extends Application {
             }
         }
         return -1L;
+    }
+
+    private void updateProduce(long id, String name, double kg, double price) throws SQLException { // update existing row
+        try (Connection conn = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASS);
+             PreparedStatement ps = conn.prepareStatement(
+                     "UPDATE produce SET name=?, kg=?, price=? WHERE id=?")) {
+            ps.setString(1, name);
+            ps.setDouble(2, kg);
+            ps.setDouble(3, price);
+            ps.setLong(4, id);
+            ps.executeUpdate();
+        }
+    }
+
+    private void deleteProduce(long id) throws SQLException { // delete a row by id
+        try (Connection conn = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASS);
+             PreparedStatement ps = conn.prepareStatement("DELETE FROM produce WHERE id=?")) {
+            ps.setLong(1, id);
+            ps.executeUpdate();
+        }
+    }
+
+    private void showUpdateDialog(Produce produce) { // popup dialog to edit existing produce
+        Dialog<Produce> dialog = new Dialog<>();
+        dialog.setTitle("Update Produce");
+        dialog.setHeaderText("Edit " + produce.getName());
+
+        ButtonType saveButtonType = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(saveButtonType, ButtonType.CANCEL);
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+        TextField nameField = new TextField(produce.getName());
+        TextField kgField = new TextField(String.valueOf(produce.getKg()));
+        TextField priceField = new TextField(String.valueOf(produce.getPrice()));
+
+        grid.add(new Label("Produce:"), 0, 0);
+        grid.add(nameField, 1, 0);
+        grid.add(new Label("Kg:"), 0, 1);
+        grid.add(kgField, 1, 1);
+        grid.add(new Label("Price:"), 0, 2);
+        grid.add(priceField, 1, 2);
+
+        dialog.getDialogPane().setContent(grid);
+
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == saveButtonType) {
+                try {
+                    String name = nameField.getText().trim();
+                    double kg = Double.parseDouble(kgField.getText().trim());
+                    double price = Double.parseDouble(priceField.getText().trim());
+                    
+                    if (name.isEmpty()) {
+                        showAlert(Alert.AlertType.WARNING, "Validation", "Produce name is required");
+                        return null;
+                    }
+                    
+                    updateProduce(produce.getId(), name, kg, price);
+                    produce.setName(name);
+                    produce.setKg(kg);
+                    produce.setPrice(price);
+                    table.refresh(); // refresh table to show updated values
+                    return produce;
+                } catch (NumberFormatException ex) {
+                    showAlert(Alert.AlertType.WARNING, "Validation", "Kg and Price must be numbers");
+                } catch (SQLException ex) {
+                    showAlert(Alert.AlertType.ERROR, "DB Error", ex.getMessage());
+                }
+            }
+            return null;
+        });
+
+        dialog.showAndWait();
+    }
+
+    private boolean showLoginDialog() { // login popup before app starts
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle("Login");
+        dialog.setHeaderText("Farmers Produce Tracker Login");
+
+        ButtonType loginButtonType = new ButtonType("Login", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(loginButtonType, ButtonType.CANCEL);
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+        TextField usernameField = new TextField();
+        usernameField.setPromptText("Username");
+        PasswordField passwordField = new PasswordField();
+        passwordField.setPromptText("Password");
+
+        grid.add(new Label("Username:"), 0, 0);
+        grid.add(usernameField, 1, 0);
+        grid.add(new Label("Password:"), 0, 1);
+        grid.add(passwordField, 1, 1);
+
+        dialog.getDialogPane().setContent(grid);
+        usernameField.requestFocus();
+
+        while (true) {
+            var result = dialog.showAndWait();
+            if (result.isPresent() && result.get() == loginButtonType) {
+                String username = usernameField.getText().trim();
+                String password = passwordField.getText();
+
+                if ("ram".equals(username) && "1234".equals(password)) {
+                    return true; // login success
+                } else {
+                    showAlert(Alert.AlertType.ERROR, "Login Failed", "Invalid username or password");
+                    usernameField.clear();
+                    passwordField.clear();
+                    usernameField.requestFocus();
+                }
+            } else {
+                return false; // user cancelled
+            }
+        }
     }
 
     private void showAlert(Alert.AlertType type, String title, String msg) { // quick popup to tell me stuff
